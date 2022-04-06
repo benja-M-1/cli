@@ -13,6 +13,10 @@ if [ -z "$TYP" ]; then
   usage
 fi
 
+clear() {
+  rm go.mod
+}
+
 init() {
   # create dummy go.mod, see comment in vendor.mod
   cat > go.mod <<EOL
@@ -42,6 +46,8 @@ outdated() {
   fi
   (set -x ; go list -mod=vendor -mod=readonly -modfile=vendor.mod -u -m -json all | go-mod-outdated -update -direct)
 }
+
+trap clear EXIT
 
 case $TYP in
   "init")
