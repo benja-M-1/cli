@@ -13,6 +13,10 @@ if [ -z "$TYP" ]; then
   usage
 fi
 
+clear() {
+  rm go.mod
+}
+
 init() {
   # create dummy go.mod, see comment in vendor.mod
   cat > go.mod <<EOL
@@ -50,15 +54,18 @@ case $TYP in
   "update")
     init
     update
+    clear
     ;;
   "validate")
     init
     update
     validate
+    clear
     ;;
   "outdated")
     init
     outdated
+    clear
     ;;
   *)
     echo >&2 "Unknown type $TYP"
