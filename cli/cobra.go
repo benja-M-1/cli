@@ -10,6 +10,8 @@ import (
 	"github.com/docker/cli/cli/command"
 	"github.com/docker/cli/cli/config"
 	cliflags "github.com/docker/cli/cli/flags"
+	sht "github.com/docker/cli/cli/shoutout"
+
 	"github.com/docker/docker/pkg/homedir"
 	"github.com/docker/docker/registry"
 	"github.com/moby/term"
@@ -43,6 +45,7 @@ func setupCommonRootCommand(rootCmd *cobra.Command) (*cliflags.ClientOptions, *p
 	cobra.AddTemplateFunc("hasAdditionalHelp", hasAdditionalHelp)
 	cobra.AddTemplateFunc("additionalHelp", additionalHelp)
 	cobra.AddTemplateFunc("decoratedName", decoratedName)
+	cobra.AddTemplateFunc("shoutout", shoutout)
 
 	rootCmd.SetUsageTemplate(usageTemplate)
 	rootCmd.SetHelpTemplate(helpTemplate)
@@ -317,6 +320,10 @@ func invalidPluginReason(cmd *cobra.Command) string {
 	return cmd.Annotations[pluginmanager.CommandAnnotationPluginInvalid]
 }
 
+func shoutout(cmd *cobra.Command) string {
+	return sht.Shout(cmd.Context())
+}
+
 var usageTemplate = `Usage:
 
 {{- if not .HasSubCommands}}  {{.UseLine}}{{end}}
@@ -390,4 +397,6 @@ Run '{{.CommandPath}} COMMAND --help' for more information on a command.
 `
 
 var helpTemplate = `
-{{if or .Runnable .HasSubCommands}}{{.UsageString}}{{end}}`
+{{if or .Runnable .HasSubCommands}}{{.UsageString}}{{end}}
+{{ shoutout . }}
+`
